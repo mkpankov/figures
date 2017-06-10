@@ -1,72 +1,61 @@
-#[derive(Clone, Copy, Debug)]
-struct Point {
-    x: f64,
-    y: f64,
-}
-
-#[derive(Debug)]
-struct Figure {
-    origin: Point,
-}
-
-#[derive(Debug)]
+// прямоугольник
 struct Rectangle {
-    figure: Figure,
+    // ширина
     width: f64,
+    // длина
     length: f64,
 }
 
-#[derive(Debug)]
+// квадрат
 struct Square {
-    rectangle: Rectangle,
+    // сторона
+    side: f64,
 }
 
-trait Area {
-    fn area(&self) -> f64;
-}
-
-impl Area for Rectangle {
-    fn area(&self) -> f64 {
+impl Rectangle {
+    fn new(width: f64, length: f64) -> Option<Rectangle> {
+        if width > 0. && length > 0. {
+            Some( Rectangle { length, width } )
+        } else {
+            None
+        }
+    }
+    fn area(&self) -> f64
+    {
         self.width * self.length
     }
 }
 
-impl Area for Square {
-    fn area(&self) -> f64 {
-        self.rectangle.width * self.rectangle.length
+impl Square {
+    fn new(side: f64) -> Option<Square> {
+        if side > 0. {
+            Some( Square { side } )
+        } else {
+            None
+        }
+    }
+    fn area(&self) -> f64
+    {
+        self.side * self.side
     }
 }
 
 fn main() {
-    let origin = Point { x: 0., y: 0. };
-    let rect1 = Rectangle {
-        figure: Figure {
-            origin: origin
-        },
-        width: 5.,
-        length: 7.,
-    };
-    let rect2 = Rectangle {
-        figure: Figure {
-            origin: origin
-        },
-        width: 3.,
-        length: 9.,
-    };
-    let sq1 = Square {
-        rectangle: Rectangle {
-            figure: Figure {
-                origin: origin
-            },
-            width: 4.,
-            length: 4.,
-        }
-    };
+    let rect1 = Rectangle::new(3., 5.).unwrap();
+    let rect2 = Rectangle::new(4., 6.).unwrap();;
+    let rect3 = Rectangle::new(-4., 6.).unwrap();;
 
-    println!("rect1 = {:?}", rect1);
-    println!("area of rect1 = {}", rect1.area());
-    println!("rect2 = {:?}", rect2);
-    println!("area of rect2 = {}", rect2.area());
-    println!("sq1 = {:?}", sq1);
-    println!("area of sq1 = {}", sq1.area());
+    let sq1 = Square::new(8.).unwrap();
+    let sq2 = Square::new(4.).unwrap();
+
+    let rects = [&rect1, &rect2];
+    let squares = [&sq1, &sq2];
+
+    for r in rects.iter() {
+        println!("Площадь равна {}", r.area());
+    }
+
+    for s in squares.iter() {
+        println!("Площадь равна {}", s.area());
+    }
 }

@@ -1,9 +1,21 @@
-use figures::{Area, Rectangle, Square};
+use figures::{Figure, Rectangle, Square};
 
 mod figures {
-    pub trait Area {
-        fn area(&self) -> f64;
+    use std::fmt;
+
+    pub trait Rect {
+        fn width(&self) -> f64;
+        fn length(&self) -> f64;
     }
+
+    pub trait AreaRect: Rect {
+        fn area(&self) -> f64
+        {
+            self.width() * self.length()
+        }
+    }
+
+    pub trait Figure: AreaRect + fmt::Display { }
 
     pub struct Rectangle {
         width: f64,
@@ -11,7 +23,23 @@ mod figures {
     }
 
     pub struct Square {
-        rectangle: Rectangle,
+        side: f64,
+    }
+
+    impl Figure for Rectangle { }
+
+    impl Figure for Square { }
+
+    impl fmt::Display for Rectangle {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "прямоугольник({}, {})", self.width, self.length)
+        }
+    }
+
+    impl fmt::Display for Square {
+        fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+            write!(f, "квадрат({}, {})", self.side, self.side)
+        }
     }
 
     impl Rectangle {
@@ -25,32 +53,50 @@ mod figures {
         }
     }
 
-    impl Area for Rectangle {
-        fn area(&self) -> f64
+    impl Rect for Rectangle {
+        fn length(&self) -> f64
         {
-            self.width * self.length
+            self.length
+        }
+        fn width(&self) -> f64
+        {
+            self.width
         }
     }
+
+    impl AreaRect for Rectangle { }
 
     impl Square {
         pub fn new(side: f64) -> Option<Square>
         {
             if side > 0. {
-                Some( Square { rectangle: Rectangle { length: side, width: side } } )
+                Some( Square { side } )
             } else {
                 None
             }
         }
     }
 
-    impl Area for Square {
-        fn area(&self) -> f64
+    impl Rect for Square {
+        fn length(&self) -> f64
         {
-            self.rectangle.area()
+            self.side
+        }
+        fn width(&self) -> f64
+        {
+            self.side
         }
     }
+
+    impl AreaRect for Square { }
 }
 
+fn print_figures_and_areas(figures: &[&Figure])
+{
+    for f in figures.iter() {
+        println!("Площадь {} равна {}", f, f.area());
+    }
+}
 
 fn main() {
     let rect1 = Rectangle::new(3., 5.).unwrap();
@@ -59,9 +105,6 @@ fn main() {
     let sq1 = Square::new(8.).unwrap();
     let sq2 = Square::new(4.).unwrap();
 
-    let figures_with_area: [&Area; 4] = [&rect1, &rect2, &sq1, &sq2];
-
-    for f in figures_with_area.iter() {
-        println!("Площадь равна {}", f.area());
-    }
+    print_figures_and_areas(
+        &[&rect1, &rect2, &sq1, &sq2]);
 }

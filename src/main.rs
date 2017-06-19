@@ -14,6 +14,8 @@ mod figures {
 
     pub trait Figure: Area + fmt::Display { }
 
+    impl<T: Area + fmt::Display> Figure for T { }
+
     pub struct Rectangle {
         width: f64,
         length: f64,
@@ -31,14 +33,6 @@ mod figures {
     pub struct Circle {
         radius: f64,
     }
-
-    impl Figure for Rectangle { }
-
-    impl Figure for Square { }
-
-    impl Figure for Ellipse { }
-
-    impl Figure for Circle { }
 
     impl fmt::Display for Rectangle {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
